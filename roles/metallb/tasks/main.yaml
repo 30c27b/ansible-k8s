@@ -1,0 +1,16 @@
+- name: Install MetalLB namespace
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/namespace.yaml
+
+- name: Install MetalLB
+  command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.6/manifests/metallb.yaml
+
+- name: Generate MetalLB secret
+  shell: kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+
+- name: Create layer2 config file
+  template:
+    src: config.yaml.j2
+    dest: /tmp/config.yaml
+
+- name: Install layer2 config file in kubernetes
+  command: kubectl apply -f /tmp/config.yaml

@@ -1,0 +1,33 @@
+---
+- name: Common setup
+  hosts: cluster
+  roles:
+    - common
+
+- name: NFS Master setup
+  hosts: masters
+  roles:
+    - nfs/master
+
+- name: NFS Workers setup
+  hosts: workers
+  roles:
+    - nfs/worker
+
+- name: Kubernetes master setup
+  hosts: masters
+  roles:
+    - kubernetes/master
+
+- name: Kubernetes workers setup
+  hosts: workers
+  roles:
+    - kubernetes/worker
+
+- name: Additional cluster addons
+  hosts: masters
+  roles:
+    - metallb
+    - ingress
+    - dashboard
+    - nfs/post

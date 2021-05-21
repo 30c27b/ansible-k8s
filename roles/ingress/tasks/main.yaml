@@ -1,0 +1,26 @@
+- name: Create ingress deploy file
+  template:
+    src: ingress.yaml.j2
+    dest: /tmp/ingress.yaml
+
+- name: Install ingress
+  command: kubectl apply -f /tmp/ingress.yaml
+
+- name: Install cert-manager
+  command: kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml
+
+- name: Create letsencrypt-staging file
+  template:
+    src: letsencrypt-staging.yaml.j2
+    dest: /tmp/letsencrypt-staging.yaml
+
+- name: Create letsencrypt-prod file
+  template:
+    src: letsencrypt-prod.yaml.j2
+    dest: /tmp/letsencrypt-prod.yaml
+
+- name: Install letsencrypt-staging
+  command: kubectl apply -f /tmp/letsencrypt-staging.yaml
+
+- name: Install letsencrypt-prod
+  command: kubectl apply -f /tmp/letsencrypt-prod.yaml

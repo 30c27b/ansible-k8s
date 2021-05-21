@@ -1,0 +1,26 @@
+- name: Install nfs-kernel-server
+  apt:
+    name: nfs-kernel-server
+    update_cache: yes
+
+- name: Create NFS share directory
+  file:
+    path: "{{ master_path }}"
+    state: directory
+    mode: 0777
+    group: nogroup
+    owner: nobody
+
+- name: Add NFS exports rule
+  lineinfile:
+    path: /etc/exports
+    line: "{{ master_path }} {{ nfs_network }}(rw,sync,no_subtree_check,no_root_squash,no_all_squash,insecure)"
+    create: yes
+
+- name: Export NFS share directory
+  command: exportfs -a
+
+- name: Restart nfs-kernel-server
+  service:
+    name: nfs-kernel-server
+    state: restarted

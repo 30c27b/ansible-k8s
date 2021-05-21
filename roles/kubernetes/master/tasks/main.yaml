@@ -1,0 +1,32 @@
+- name: Create init command from template
+  template:
+    src: init.sh.j2
+    dest: /tmp/init.sh
+
+- name: Init Kubernetes cluster
+  command: bash /tmp/init.sh
+
+- name: Create Kubernetes config directory
+  file:
+    path: ".kube/"
+    state: directory
+
+- name: Copy admin.conf to Home directory
+  copy:
+    src: "/etc/kubernetes/admin.conf"
+    dest: ".kube/config"
+    owner: "{{ ansible_user | default(ansible_user_id) }}"
+    group: "{{ ansible_user | default(ansible_user_id) }}"
+    mode: 0755
+    remote_src: true
+
+- name: Install Flannel cni
+  command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+- name: "Copy config file"
+  fetch:
+    src: /etc/kubernetes/admin.conf
+    dest: ./admin.conf
+    flat: yes
+  run_once: yes
+  ignore_errors: yes

@@ -1,0 +1,12 @@
+- name: Install nfs-common
+  apt:
+    name: nfs-common
+    update_cache: yes
+
+- name: Create NFS share directory
+  file:
+    path: "{{ worker_path }}"
+    state: directory
+
+- name: Mount nfs directory
+  command: "mount {{ hostvars[groups['masters'][0]].internal_ip }}:{{ master_path }} {{ worker_path }}"

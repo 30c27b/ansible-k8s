@@ -1,0 +1,5 @@
+kubeadm init --kubernetes-version {{ kube_version }} \
+             --pod-network-cidr {{ pod_network_cidr }} \
+             --apiserver-advertise-address={{ internal_ip }} \
+             --apiserver-cert-extra-sans={% for host in groups['cluster'] %}{{ hostvars[host].ansible_host }}{% if not loop.last %},{% endif %}{% endfor %} \
+             {{ kube_init_opts }}

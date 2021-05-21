@@ -1,0 +1,23 @@
+- name: Create rbac file
+  template:
+    src: rbac.yaml.j2
+    dest: /tmp/nfs-rbac.yaml
+
+- name: Create deploy file
+  template:
+    src: deploy.yaml.j2
+    dest: /tmp/nfs-deploy.yaml
+
+- name: Create storageclass file
+  template:
+    src: sc.yaml.j2
+    dest: /tmp/nfs-sc.yaml
+
+- name: Install rbac
+  command: kubectl apply -f /tmp/nfs-rbac.yaml
+
+- name: Install deploy
+  command: kubectl apply -f /tmp/nfs-deploy.yaml
+
+- name: Install storageclass
+  command: kubectl apply -f /tmp/nfs-sc.yaml

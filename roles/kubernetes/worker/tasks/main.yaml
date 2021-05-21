@@ -1,0 +1,14 @@
+- name: Generate join token
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_cmd
+  delegate_to: "{{ groups['masters'][0] }}"
+
+- name: Save join command
+  set_fact:
+    kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
+
+- name: Store join command
+  action: copy content="{{ kubeadm_join }}" dest="/etc/kubernetes/kubeadm-join.command"
+
+- name: Run kubeadm join
+  shell: "{{ kubeadm_join }}"

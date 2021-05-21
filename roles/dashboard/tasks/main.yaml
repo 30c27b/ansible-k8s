@@ -1,0 +1,32 @@
+- name: Install metrics-server
+  command: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+- name: Install dashboard
+  command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+
+- name: Copy ServiceAccount file
+  copy:
+    src: sa.yaml
+    dest: /tmp/sa.yaml
+
+- name: Copy ClusterRoleBinding file
+  copy:
+    src: crb.yaml
+    dest: /tmp/crb.yaml
+
+- name: Install ServiceAccount
+  command: kubectl apply -f /tmp/sa.yaml
+
+- name: Install ClusterRoleBinding
+  command: kubectl apply -f /tmp/crb.yaml
+
+- name: Get secret name
+  shell: 'kubectl -n kubernetes-dashboard get secret -o=name| grep admin-user'
+  register: secret
+
+- name: Get token for kubernetes-dashboard user
+  shell: 'kubectl -n kubernetes-dashboard get {{ secret.stdout }} -o {% raw %}go-template="{{.data.token | base64decode}}"{% endraw %}'
+  register: token
+
+- name: Save token to file
+  local_action: copy content={{ token.stdout }} dest=./dashboard-token.txt

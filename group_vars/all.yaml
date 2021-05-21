@@ -1,0 +1,19 @@
+# Options for kubeadm init
+kube_version: v1.21.0
+pod_network_cidr: 10.244.0.0/16
+kube_init_opts: ""
+
+# Network cni
+# cni: flannel
+# network_interface: ens10
+
+# NFS
+master_path: /mnt/nfs_storage
+worker_path: /mnt/nfs_storage
+nfs_network: 10.8.0.0/16
+provisioner_name: 30c27b.com/nfs
+storageclass_name: nfs-storage
+archive_on_delete: "true"
+
+# Let's Encrypt
+letsencrypt_email: email@example.com
